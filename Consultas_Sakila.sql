@@ -41,7 +41,7 @@ SELECT DISTINCT a.first_name, a.last_name
 				 JOIN film_text ft ON i.film_id = ft.film_id 
 	WHERE ft.description LIKE '%epic%' LIMIT 5;
 				 
--- Otra formad ehacer más corta con USING (la misma consulta anterior)
+-- Otra forma de hacer más corta con USING (la misma consulta anterior)
 SELECT DISTINCT a.first_name, a.last_name 
 	FROM actor a JOIN film_actor fa USING (actor_id) 
 				 JOIN film f USING (film_id)
