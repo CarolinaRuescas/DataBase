@@ -72,6 +72,8 @@ SELECT avg(length(firstName)) media from employees; -- con esto calculamos la me
 SELECT avg(length(firstName)) media from employees GROUP BY officeCode; -- la media de cada una de las oficinas
 SELECT officeCode, avg(length(firstName)) media from employees GROUP BY officeCode; -- igual que el anterior pero también aparece agrupado por codigo de oficina
 
+-- Para que aparezca también el número
+SELECT officeCode, o.phone, avg(length(firstName)) media from employees GROUP BY officeCode; 
 
 
 
