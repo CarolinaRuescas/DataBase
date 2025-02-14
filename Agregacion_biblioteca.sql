@@ -52,7 +52,41 @@ SELECT categoria_id, COUNT(DISTINCT autor_id) FROM libro GROUP BY categoria_id H
 
 
 -- EJERCICIO 7. Media de los años de vida de los autores de cada categoría.
+SELECT year(fallecimiento) - YEAR(nacimiento) FROM autor;
+SELECT avg(year(fallecimiento) - YEAR (nacimiento)) FROM autor;
 
-SELECT categoria_id, avg(nacimiento - fallecimiento) FROM autor GROUP BY categoria_id;
+SELECT l.categoria_id, avg(year(fallecimiento) - YEAR (nacimiento)) MediaAnyos
+    FROM autor a 
+        JOIN libro l ON a.id = l.autor_id
+    GROUP BY l.categoria_id;
+
+SELECT c.nombre, avg(year(fallecimiento) - YEAR (nacimiento)) MediaAnyos  -- al meter ese segundo JOIN lo que hace es que no aparezcan los NULL
+    FROM autor a 
+        JOIN libro l ON a.id = l.autor_id
+        JOIN categoria c ON c.id = l.categoria_id
+    GROUP BY l.categoria_id;
+
+SELECT c.nombre, avg(year(fallecimiento) - YEAR (nacimiento)) MediaAnyos  -- Para que aparezcan también los NULL
+    FROM autor a 
+        JOIN libro l ON a.id = l.autor_id
+        LEFT JOIN categoria c ON c.id = l.categoria_id
+    GROUP BY l.categoria_id;
+
 
 -- EJERCICIO 8. Número de autores diferentes de libros prestados a cada usuario, sólo si están en la categoría Novela.
+
+SELECT p.usuario_id, COUNT(DISTINCT l.autor_id)
+    FROM prestamo p
+        JOIN libro l ON p.libro_id = l.id
+        JOIN categoria c ON c.id = l.categoria_id
+    WHERE c.nombre = "Novela"
+    GROUP BY p.usuario_id;
+
+-- EJERCICIO 9. Total de ejemplares de libros de cada autor
+SELECT autor_id, SUM(ejemplares) FROM libro GROUP BY autor_id;
+
+-- EJERCICIO 10. Total de ejemplares de libros de cada autor publicados depsués de 1970.
+
+SELECT autor_id, SUM(ejemplares) FROM libro WHERE YEAR(fecha_publicacion) > 1970 GROUP BY autor_id;
+
+-- EJERCICIO 11. 

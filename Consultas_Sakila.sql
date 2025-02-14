@@ -48,3 +48,34 @@ SELECT DISTINCT a.first_name, a.last_name
 		 	     JOIN inventory i USING (film_id)
 				 JOIN film_text ft USING (film_id)
 	WHERE ft.description LIKE '%epic%' LIMIT 5;
+
+-- Numero de peliculas que hay en cada idioma
+SELECT l.name, count(f.film_id) FROM language l JOIN film f USING(language_id) GROUP BY l.language_id;
+
+-- Número de peliculas diferentes que hay en cada ciudad (tiene que aparecer el nombre de la ciudad y el numero de peliculas)
+SELECT c.city, count(DISTINCT i.film_id) 
+    FROM city c 
+	    JOIN address a USING (city_id) 
+        JOIN store s USING (address_id)
+        JOIN inventory i USING (store_id)
+    GROUP BY c.city_id;
+
+-- Número de peliculas distintas que hay en cada país y ciudad
+SELECT co.country, c.city, count(DISTINCT i.film_id)
+    FROM country co
+        JOIN city c USING(country_id)
+		JOIN address a USING (city_id) 
+        JOIN store s USING (address_id)
+        JOIN inventory i USING (store_id)
+    GROUP BY co.country_id, c.city_id;
+
+-- Número de categorias distintas de peliculas alquiladas por cliente y staff.
+SELECT r.customer_id, r.staff_id, count(DISTINCT fc.category_id)
+    FROM rental r
+	    JOIN inventory i USING (inventory_id)
+		JOIN film f USING (film_id)
+		JOIN film_category fc USING (film_id)
+    GROUP BY r.customer_id, r.staff_id;
+
+-- Longitud media de las películas que hay en cada tienda y de cada categoría.
+SELECT s.store, ca.category_id, avg()
