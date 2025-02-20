@@ -79,3 +79,56 @@ SELECT r.customer_id, r.staff_id, count(DISTINCT fc.category_id)
 
 -- Longitud media de las películas que hay en cada tienda y de cada categoría.
 SELECT s.store, ca.category_id, avg()
+
+
+-- Ejercicio1. Número de actores en cada pelicula
+SELECT COUNT(DISTINCT actor_id) as actors, film_id FROM film_actor GROUP BY film_id;
+
+-- A subquery statement is made inside the from statement, and is used as a regular table
+SELECT * FROM (
+    SELECT COUNT(DISTINCT actor_id) as actors, film_id FROM film_actor GROUP BY film_id)
+    WHERE actors > 10;
+
+SELECT f.film_id, f.title, actorsCounter.actors
+    FROM (
+        SELECT film_id, COUNT(DISTINCT actor_id) actors
+            FROM film_actor
+            GROUP BY film_id
+    ) AS actorsCounter JOIN film f USING(film_id)
+    WHERE actors > 10;
+
+-- EX 2: add a categories counter column next to actorsCounter 
+SELECT f.film_id, f.title, actorsCounter.actors, countCat.categories
+    FROM (
+        SELECT film_id, COUNT(DISTINCT actor_id) actors
+            FROM film_actor
+            GROUP BY film_id
+        ) AS actorsCounter 
+        JOIN film f USING(film_id)
+        JOIN (
+            SELECT film_id, count(DISTINCT category_id) categories
+            FROM film_category
+            GROUP BY film_id
+        ) AS countCat USING(film_id)
+    WHERE actors > 10;
+
+-- EX 3: number of films by each actor
+SELECT actor_id, COUNT(DISTINCT film_id) FROM film_actor GROUP BY actor_id;
+
+-- EX 4: actors who had participated on Drama films
+SELECT actor_id 
+    FROM film_actor fa JOIN film f USING(film_id)
+                       JOIN film_category fc USING(film_id)
+                       JOIN category c USING(category_id)
+    WHERE c.name = 'Drama';
+
+-- Also, subqueries can be made inside where conditions
+SELECT actor_id, first_name, last_name
+    FROM actor
+    WHERE actor_id IN (
+        SELECT actor_id 
+            FROM film_actor fa JOIN film f USING(film_id)
+                               JOIN film_category fc USING(film_id)
+                               JOIN category c USING(category_id)
+    WHERE c.name = 'Drama'
+    );

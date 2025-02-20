@@ -89,4 +89,31 @@ SELECT autor_id, SUM(ejemplares) FROM libro GROUP BY autor_id;
 
 SELECT autor_id, SUM(ejemplares) FROM libro WHERE YEAR(fecha_publicacion) > 1970 GROUP BY autor_id;
 
--- EJERCICIO 11. 
+-- Martes_18_Febrero
+
+-- We can use conditional statements in mysql as the following example
+--                 condition        true      false
+SELECT titulo, IF(ejemplares > 10, 'Muchos', 'Pocos') AS Cantidad FROM libro;
+
+-- EX 1: number of examples in every category
+SELECT count(*) FROM libro GROUP BY categoria_id;
+
+-- Its posible to convine aggregation functions with if statements
+--                  NULL rows wont be counted
+SELECT categoria_id, COUNT(IF(ejemplares > 10, 1, NULL)) FROM libro GROUP BY categoria_id;
+
+-- This consult wont work because, even thought a 0 means nothing, COUNT function will count it as a row
+SELECT categoria_id, COUNT(IF(ejemplares > 10, 1, 0)) FROM libro GROUP BY categoria_id;
+
+-- USE sakila;
+
+-- EX 2: averange rental days for every store and customer
+SELECT AVG(DATEDIFF(r.return_date, r.rental_date)) AS AdverangeRentingDays, r.customer_id, s.store_id
+    FROM rental r JOIN staff s USING(staff_id)
+    GROUP BY s.store_id, r.customer_id;
+
+-- EX 3: adverange rental days for those rents made between january and may
+SELECT s.store_id, r.customer_id, AVG(IF(MONTH(rental_date) < 6, DATEDIFF(r.return_date, r.rental_date), null)) AS averangeRental
+    FROM rental r JOIN staff s USING(staff_id)
+    GROUP BY s.store_id, r.customer_id
+    HAVING averangeRental IS NOT NULL;
