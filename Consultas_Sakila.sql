@@ -132,3 +132,56 @@ SELECT actor_id, first_name, last_name
                                JOIN category c USING(category_id)
     WHERE c.name = 'Drama'
     );
+
+-- 21 / 02 / 2025
+
+-- NÚMERO DE ACTORES POR PELÍCULA
+SELECT film_id, count(DISTINCT actor_id) 
+   FROM film_actor 
+   GROUP BY film_id;
+
+-- 1º subconsulta hacer la media de la columna de actores que hay en todas 
+-- las películas
+SELECT AVG(media)
+FROM(
+   SELECT count(DISTINCT actor_id) media 
+   FROM film_actor 
+   GROUP BY film_id
+   )tabla;
+
+-- 2º lista de nombre de las pelciulas donde participan más actores 
+-- que en la media (la media que acabamos de clacular) 
+
+-- En esta subconsulta lo primero que hacemos es consultar en que peliculas
+-- participan más de cinco actores.
+
+SELECT f.title, COUNT(fa.actor_id) num_actores
+   FROM film_actor fa JOIN film f USING (film_id)
+   GROUP BY f.film_id
+   HAVING num_actores > 5
+   limit 10;
+
+-- *Esta seria la solución de 2º (lista de nombre de las pelciulas donde participan más actores 
+-- que en la media )
+SELECT f.title, COUNT(fa.actor_id) num_actores
+   FROM film_actor fa JOIN film f USING (film_id)
+   GROUP BY f.film_id
+   HAVING num_actores > (
+    SELECT AVG(media)
+    FROM(
+       SELECT count(DISTINCT actor_id) media 
+       FROM film_actor 
+       GROUP BY film_id
+       )tabla
+   );
+
+-- CLIENTES QUE HAN ALQUILADO MÁS PELICULAS QUE LA MEDIA
+-- 1º Media de todos los clientes que han alquilado peliculas
+SELECT AVG(media)
+FROM(
+   SELECT count( rental_id) media, customer_id
+   FROM rental
+   GROUP BY customer_id
+   )tabla;
+
+-- Número de peliculas que ha alquilado cada cliente
