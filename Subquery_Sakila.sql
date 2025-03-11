@@ -84,8 +84,8 @@ WITH lista_clientes AS(
 -- Consulta general: número medio de actores(que han actuado) por pelicula de las alquiladas por 
 -- los clientes de temp2.
 WITH numero_actores AS(
-    SELECT film_id, COUNT(actor_id)
-    FROM film_actor fa
+    SELECT film_id, COUNT(actor_id) actores_x_film
+    FROM film_actor 
     GROUP BY film_id
 ), lista_clientes AS(
     SELECT customer_id
@@ -94,6 +94,54 @@ WITH numero_actores AS(
     ORDER BY COUNT(rental_id) DESC
     LIMIT 5
 )
-SELECT 
+SELECT AVG(na.actores_x_film)
+FROM lista_clientes
+   JOIN rental USING (cusotmer_id)
+   JOIN inventory USING (inventory_id)
+   JOIN num_actores na USING (film_id);
 
-   
+
+
+-- RELACIONAR QUERY EXTERNA CON SUBQUERY
+
+-- obtener la lista de clientes que se llaman igual que algun otro cliente pero sin ser el mismo
+SELECT C.customer_id
+FROM customer C
+WHERE c. customer_id IN(
+    SELECT c2.customer_id
+    FROM customer c2
+    WHERE c.first_name = c2.first_name
+       AND c.customer_id <> c2.customer_id
+);
+
+SELECT c.customer_id
+FROM customer c JOIN customer c2   ON c.first_name = c2.first_name
+   AND c.customer_id <> c2.customer_id
+   ;
+
+
+
+
+-- VISTAS
+
+CREATE VIEW top5_clientes AS
+SELECT customer_id
+FROM rental
+GROUP BY customer_id
+ORDER BY COUNT(rental_id) DESC
+LIMIT 5
+;
+
+show tables;
+show create table top5_clientes;
+show full tables where table_type='VIEW';
+SELECT * from top5_clientes;
+
+-- OPTIMIZACIÓN
+EXPLAIN ANALYZE 
+SELECT customer_id
+FROM rental
+GROUP BY customer_id
+ORDER BY COUNT(rental_id) DESC
+LIMIT 5
+;
