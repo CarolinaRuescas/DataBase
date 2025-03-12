@@ -146,17 +146,57 @@ WHERE EXISTS (
 -- los 5 clientes que más dinero se han gastado. 
 
 -- 1º scacamos los 5 clientes que mas dinero se han gastado
+SELECT p.customer_id
+FROM payment p 
+GROUP BY p.customer_id
+ORDER BY SUM(p.amount) DESC
+LIMIT 5;
 
-
--- 2º sacar la lista de categorias
-
+-- 2º sacar la lista de categorias alquiladas por los clientes anteriores
+WITH top5_clientes AS (
+   SELECT p.customer_id
+   FROM payment p 
+   GROUP BY p.customer_id
+   ORDER BY SUM(p.amount) DESC
+   LIMIT 5
+), top5_cli_cat AS(
+   SELECT DISTINCT fc.category_id
+   FROM top5_clientes t5
+      JOIN rental USING(customer_id)
+      JOIN inventory USING(inventory_id)
+      JOIN film_category fc USING(film_id)
+)
+SELECT category_id
+FROM top5_cli_cat;
 
 
 -- 3º sacar las 3 categorias de más duración pero de la lista de categorias anterior
 
+WITH top5_clientes AS (
+   SELECT p.customer_id
+   FROM payment p 
+   GROUP BY p.customer_id
+   ORDER BY SUM(p.amount) DESC
+   LIMIT 5
+), top5_cli_cat AS(
+   SELECT DISTINCT fc.category_id
+   FROM top5_clientes t5
+      JOIN rental USING(customer_id)
+      JOIN inventory USING(inventory_id)
+      JOIN film_category fc USING(film_id)
+), top3_category AS(
+SELECT category_id 
+FROM top5_cli_cat
+   JOIN film_category USING(category_id)
+   JOIN film f USING(film_id)
+GROUP BY category_id
+ORDER BY SUM(f.length) DESC
+LIMIT 3
+)
+SELECT *
+FROM top3_category;
 
-
-
+-- 4º sacar para cada categoria el numero medio de actores
 
 
 
