@@ -101,23 +101,69 @@ FROM lista_clientes
    JOIN num_actores na USING (film_id);
 
 
-
--- RELACIONAR QUERY EXTERNA CON SUBQUERY
-
+-- RELACIONAR QUERY EXTERNA CON SUBQUERY (CORRELACIONADAS)
+-- EJERCICIO 3
 -- obtener la lista de clientes que se llaman igual que algun otro cliente pero sin ser el mismo
-SELECT C.customer_id
-FROM customer C
-WHERE c. customer_id IN(
-    SELECT c2.customer_id
+SELECT c.customer_id
+FROM customer c
+WHERE c. customer_id IN (
+    SELECT c2.customer_id 
     FROM customer c2
     WHERE c.first_name = c2.first_name
        AND c.customer_id <> c2.customer_id
 );
 
 SELECT c.customer_id
-FROM customer c JOIN customer c2   ON c.first_name = c2.first_name
-   AND c.customer_id <> c2.customer_id
+FROM customer c JOIN customer c2   
+   ON c.first_name = c2.first_name
+      AND c.customer_id <> c2.customer_id
    ;
+
+
+
+-- una consulta que el first name de todos los clientes excepto el cliente que estoy recorriendo en la primera query
+SELECT c.customer_id
+FROM customer c
+WHERE c. first_name IN (
+    SELECT c2.first_name 
+    FROM customer c2
+    WHERE c.customer_id <> c2.customer_id
+);
+
+-- hacer la misma consulta y en lugar de usar IN emplear EXISTS
+SELECT c.customer_id
+FROM customer c
+WHERE EXISTS (
+    SELECT 1 
+    FROM customer c2
+    WHERE c.first_name = c2.first_name
+       AND c.customer_id <> c2.customer_id
+);
+
+-- EJERCICIO 4
+-- Obtener el número medio de actores en las películas de las 3 categorías
+-- que suman más duración en sus películas solo para las categorías alquiladas por
+-- los 5 clientes que más dinero se han gastado. 
+
+-- 1º scacamos los 5 clientes que mas dinero se han gastado
+
+
+-- 2º sacar la lista de categorias
+
+
+
+-- 3º sacar las 3 categorias de más duración pero de la lista de categorias anterior
+
+
+
+
+
+
+
+
+
+
+
 
 
 
