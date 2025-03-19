@@ -1,10 +1,13 @@
 -- Para sacar la resta entre la fecha y el alquiler
 
-SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) FROM rental limit 5;
+SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) 
+FROM rental limit 5;
 
 -- Sacar el rental ID con el alquiler más largo (columna datediff)
 
-SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) AS diferencia FROM rental ORDER BY diferencia DESC LIMIT 1;
+SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) AS diferencia 
+FROM rental 
+ORDER BY diferencia DESC LIMIT 1;
 
 -- Esta es otra forma de hacer la búsqueda anterior
 
@@ -14,10 +17,13 @@ SELECT rental_id FROM rental ORDER BY  DATEDIFF(return_date, rental_date) DESC L
 
 SELECT title FROM film  WHERE  length > 100 ORDER BY MONTH(last_update), title LIMIT 5;
 
--- JOIN tabla customer y film. Hacer una ocnsulta que devuelva el nombre del cliente y el título 
+-- JOIN tabla customer y film. 
+-- Hacer una ocnsulta que devuelva el nombre del cliente y el título 
 -- de la pelicula para aquellos clientes y peliculas que tienen el mismo mes en la columna last_update
 
-SELECT f.title, c.first_name, c.last_name FROM customer c, film f WHERE MONTH (c.last_update) = MONTH (f.last_update) LIMIT 10;
+SELECT f.title, c.first_name, c.last_name 
+FROM customer c, film f 
+WHERE MONTH (c.last_update) = MONTH (f.last_update) LIMIT 10;
 
 -- direccion _address_ (sin repetidos) de las tiendas _store_ en las que trabajan empeados que no tienen _picture_ 
 SELECT a.address, s.first_name, s.last_name 
