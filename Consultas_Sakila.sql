@@ -130,12 +130,13 @@ SELECT actor_id
 
 -- Also, subqueries can be made inside where conditions
 SELECT actor_id, first_name, last_name
-    FROM actor
-    WHERE actor_id IN (
-        SELECT actor_id 
-            FROM film_actor fa JOIN film f USING(film_id)
-                               JOIN film_category fc USING(film_id)
-                               JOIN category c USING(category_id)
+FROM actor
+WHERE actor_id IN (
+    SELECT actor_id 
+    FROM film_actor fa 
+        JOIN film f USING(film_id)
+        JOIN film_category fc USING(film_id)
+        JOIN category c USING(category_id)
     WHERE c.name = 'Drama'
     );
 
