@@ -1,97 +1,78 @@
--- Para sacar la resta entre la fecha y el alquiler
+-- Sacar la resta entre la fecha y el alquiler
+SELECT return_date, rental_date, DATEDIFF(return_date, rental_date) resta_fecha
+FROM rental LIMIT 6;
 
-SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) 
-FROM rental limit 5;
 
 -- Sacar el rental ID con el alquiler más largo (columna datediff)
-
-SELECT rental_id, return_date, rental_date, DATEDIFF(return_date, rental_date) AS diferencia 
+SELECT rental_id, DATEDIFF(return_date, rental_date) alquiler_mas_largo
 FROM rental 
-ORDER BY diferencia DESC LIMIT 1;
-
--- Esta es otra forma de hacer la búsqueda anterior
-
-SELECT rental_id FROM rental ORDER BY  DATEDIFF(return_date, rental_date) DESC LIMIT 1;
+ORDER BY alquiler_mas_largo DESC LIMIT 1;
 
 -- Peliculas que duren mas de 100 minutos ordenadas por mes de last_update y por el titulo (que solo salgan las 5 primeras)
-
-SELECT title 
-FROM film  
-WHERE  length > 100 
+SELECT title, length AS Duracion
+FROM film
+WHERE length > 100
 ORDER BY MONTH(last_update), title LIMIT 5;
 
--- JOIN tabla customer y film. 
--- Hacer una ocnsulta que devuelva el nombre del cliente y el título 
--- de la pelicula para aquellos clientes y peliculas que tienen el mismo mes en la columna last_update
+-- Hacer una consulta que devuelva el nombre del cliente y el título de la pelicula para aquellos clientes y peliculas que tienen el mismo mes en la columna last_update
 
-SELECT f.title, c.first_name, c.last_name 
-FROM customer c, film f 
-WHERE MONTH (c.last_update) = MONTH (f.last_update) LIMIT 10;
+SELECT c.first_name, c.last_name, f.title, f.last_update
+FROM customer c, film f
+WHERE MONTH(c.last_update) = MONTH(f.last_update) LIMIT 5;
 
 -- direccion _address_ (sin repetidos) de las tiendas _store_ en las que trabajan empeados que no tienen _picture_ 
-SELECT a.address, s.first_name, s.last_name 
-	FROM address a JOIN store st ON a.address_id  = st.address_id 
-	JOIN staff s ON st.store_id = s.staff_id 
-	WHERE s.picture IS NULL;
 
--- Si queremos simplicar la consulta anterior (esto solo se puede utilizar si el nombre es exactamente igual)
-SELECT DISTINCT a.address
-	FROM address a JOIN store st USING (address_id) 
-				   JOIN staff s USING (store_id)
-	WHERE s.picture IS NULL;
+SELECT a.address
+FROM address a
+   JOIN store s USING(address_id)
+   JOIN staff st USING(store_id)
+WHERE st.picture IS NULL;
 
 -- Nombre de los actores que han participado en alguna pelicula que tiene un texto con la descripción que 
 -- incluya la palabra "epic"
-
-SELECT DISTINCT a.first_name, a.last_name 
-	FROM actor a JOIN film_actor fa ON a.actor_id = fa. actor_id 
-				 JOIN film f ON fa.film_id = f.film_id 
-				 JOIN inventory i ON f.film_id = i.film_id 
-				 JOIN film_text ft ON i.film_id = ft.film_id 
-	WHERE ft.description LIKE '%epic%' LIMIT 5;
-				 
+SELECT DISTINCT a.first_name, a.last_name
+FROM actor a 
+   JOIN film_actor fa USING(actor_id)
+   JOIN film_text ft USING(film_id)
+WHERE ft.description LIKE '%epic%' LIMIT 6;
+ 
 -- Otra forma de hacer más corta con USING (la misma consulta anterior)
-SELECT DISTINCT a.first_name, a.last_name 
-	FROM actor a JOIN film_actor fa USING (actor_id) 
-				 JOIN film f USING (film_id)
-		 	     JOIN inventory i USING (film_id)
-				 JOIN film_text ft USING (film_id)
-	WHERE ft.description LIKE '%epic%' LIMIT 5;
+
+
+
+
 
 -- Numero de peliculas que hay en cada idioma
-SELECT l.name, count(f.film_id) FROM language l JOIN film f USING(language_id) GROUP BY l.language_id;
+
+
+
 
 -- Número de peliculas diferentes que hay en cada ciudad (tiene que aparecer el nombre de la ciudad y el numero de peliculas)
-SELECT c.city, count(DISTINCT i.film_id) 
-    FROM city c 
-	    JOIN address a USING (city_id) 
-        JOIN store s USING (address_id)
-        JOIN inventory i USING (store_id)
-    GROUP BY c.city_id;
+
+
+
 
 -- Número de peliculas distintas que hay en cada país y ciudad
-SELECT co.country, c.city, count(DISTINCT i.film_id)
-    FROM country co
-        JOIN city c USING(country_id)
-		JOIN address a USING (city_id) 
-        JOIN store s USING (address_id)
-        JOIN inventory i USING (store_id)
-    GROUP BY co.country_id, c.city_id;
+
+
+
+
 
 -- Número de categorias distintas de peliculas alquiladas por cliente y staff.
-SELECT r.customer_id, r.staff_id, count(DISTINCT fc.category_id)
-    FROM rental r
-	    JOIN inventory i USING (inventory_id)
-		JOIN film f USING (film_id)
-		JOIN film_category fc USING (film_id)
-    GROUP BY r.customer_id, r.staff_id;
+
+
+
 
 -- Longitud media de las películas que hay en cada tienda y de cada categoría.
-SELECT s.store, ca.category_id, avg()
+
+
 
 
 -- Ejercicio1. Número de actores en cada pelicula
-SELECT COUNT(DISTINCT actor_id) as actors, film_id FROM film_actor GROUP BY film_id;
+
+
+
+
 
 -- A subquery statement is made inside the from statement, and is used as a regular table
 SELECT * FROM (
