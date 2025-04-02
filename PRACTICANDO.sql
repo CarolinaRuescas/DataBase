@@ -176,3 +176,4 @@ FROM(
    )tabla;
 
 -- Número de peliculas que ha alquilado cada cliente
+
